@@ -4,17 +4,18 @@
 \alias{plot_past}
 \title{Scatter plot of past benchmarks}
 \usage{
-plot_past(test_group = c("prog", "matrix_fun", "matrix_cal", "read", "write"),
-  byte_optimize = NULL, blas_optimize = NULL, log = "y")
+plot_past(test_group, byte_optimize = NULL, blas_optimize = NULL,
+  log = "y")
 }
 \arguments{
-\item{test_group}{One of "prog", "matrix_fun", "matrix_cal", "read", "write". Default it \code{prog}.}
+\item{test_group}{One of "prog", "matrix_fun", "matrix_cal", "read5", "read50", "read200", 
+"write5", "write50" or "write200". Default value \code{prog}.}
 
 \item{byte_optimize}{Default \code{NULL}. The default behaviour is to plot all results.
 To plot only the byte optimized results, set to \code{TRUE}, otherwise \code{FALSE}.}
 
 \item{blas_optimize}{Default \code{NULL}. The default behaviour is to plot all results.
-To plot only the BLASS optimized results, set to \code{TRUE}, otherwise \code{FALSE}.}
+To plot only the BLAS optimized results, set to \code{TRUE}, otherwise \code{FALSE}.}
 
 \item{log}{By default the y axis is plotted on the log scale. To change, set the 
 the argument equal to the empty parameter string, \code{""}.}
@@ -29,6 +30,6 @@ The data set used is \code{data(past_results)}.
 }
 \examples{
 ## Plot non byte optimize code
-plot_past(byte_optimize=FALSE)
+plot_past("prog", byte_optimize=FALSE)
 }
 
