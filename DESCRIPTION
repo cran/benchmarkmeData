@@ -1,7 +1,7 @@
 Package: benchmarkmeData
 Type: Package
 Title: Data Set for the 'benchmarkme' Package
-Version: 1.0.0
+Version: 1.0.1
 Authors@R: person(given="Colin", family="Gillespie",
     email="csgillespie@gmail.com", role = c("aut", "cre"))
 Maintainer: Colin Gillespie <csgillespie@gmail.com>
@@ -15,6 +15,6 @@ RoxygenNote: 6.1.1
 License: GPL-2 | GPL-3
 Repository: CRAN
 NeedsCompilation: no
-Packaged: 2019-01-27 17:21:42 UTC; ncsg3
+Packaged: 2019-03-08 08:09:29 UTC; ncsg3
 Author: Colin Gillespie [aut, cre]
-Date/Publication: 2019-01-27 22:42:22 UTC
+Date/Publication: 2019-03-08 08:52:45 UTC
