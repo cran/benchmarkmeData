@@ -1,6 +1,6 @@
-3e6c3fd90602cc8a7e867cbe79306487 *DESCRIPTION
+d0abc3f93a57106c080f50f43fade2f4 *DESCRIPTION
 6f9559f4a99ce026053d513aa1e611a6 *NAMESPACE
-3e3a968b4158e5ebd88be68ae9ab5d9f *NEWS.md
+8404df37f2e5778b02d094cfd8333d9d *NEWS.md
 85bc9f46a46a87391a4acb382999335d *R/benchmarkmeData-package.R
 f38e94d1e47b8b47c5a1df0601b559f1 *R/data_help_files.R
 4e56ec6846216621e38a2d3f4d4dba59 *R/datatable.R
@@ -12,8 +12,8 @@ aad35a28e0cc4ad7b00f10da43aeebe9 *R/plot_past.R
 8abff850f219c3ff83ccec36cb473aa0 *R/select_results.R
 0f2cf9f6c9bf6fa101b6c0b382e99d3e *R/shine.R
 e61de53c74c4638abf3f1ea2d17ddb39 *R/zzz.R
-0dd828f700247073962ddcc23db80a69 *data/past_results.RData
-fdd8eaaeb2aa604039fa42a9ee77d15f *data/past_results_v2.RData
+905952451f538825745568706f3fdd5d *data/past_results.RData
+698a9ba33f727d167c5ea9a18dfca11e *data/past_results_v2.RData
 6c0ae514c5ec95d558d170ea8c67f4fb *inst/shinyapps_io/dashboard.Rmd
 0aa3675b23fde0f092a964506601a9d7 *inst/shinyapps_io/favicon.png
 88910fa4c596f853aa8ddeac2c5f5974 *inst/shinyapps_io/functions.R
