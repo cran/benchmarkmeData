@@ -1,16 +1,18 @@
 ---
 title: "Benchmarkme"
 runtime: shiny
-output: 
+output:
   flexdashboard::flex_dashboard:
     css: style.css
     favicon: favicon.png
 ---
 ```{r include=FALSE, eval=FALSE}
 drat::addRepo("csgillespie")
-rsconnect::deployApp(appDir = "~/github/benchmarkme-data/inst/shinyapps_io/",
-                     account="jumpingrivers", server = "shinyapps.io",
-                     appTitle = "benchmarkme"
+rsconnect::deployApp(
+  appDir = "~/github/benchmarkme-data/inst/shinyapps_io/",
+  account = "jumpingrivers",
+  server = "shinyapps.io",
+  appTitle = "benchmarkme"
 )
 ```
 
@@ -19,7 +21,7 @@ library("shiny")
 library("flexdashboard")
 library("benchmarkmeData")
 library("plotly")
-data("past_results_v2", package="benchmarkmeData")
+data("past_results_v2", package = "benchmarkmeData")
 source("functions.R")
 ```
 
@@ -30,25 +32,37 @@ Select the machines you are interested in
 
 ```{r}
 ## The shiny part
-selectInput("byte", "Byte compiled", 
-            c("All", "Standard", "Optimised"))
-selectInput("blas", "Blas", 
-            c("All", "Standard", "Optimised"))
-selectInput("os", "Operating system", 
-            c("All", "Linux", "Apple", "Windows", "Unix"))
+selectInput("byte", "Byte compiled", c("All", "Standard", "Optimised"))
+selectInput("blas", "Blas", c("All", "Standard", "Optimised"))
+selectInput(
+  "os",
+  "Operating system",
+  c("All", "Linux", "Apple", "Windows", "Unix")
+)
 
 checkboxInput("is_parallel", "Parallel benchmarks", TRUE)
 
-selectInput("test", "Benchmark test", 
-            c("Programming", "Matrix functions", "Matrix calulations", 
-              "Read 5MB", "Read 50MB","Read 200MB",
-              "Write 5MB", "Write 50MB", "Write 200MB"))
+selectInput(
+  "test",
+  "Benchmark test",
+  c(
+    "Programming",
+    "Matrix functions",
+    "Matrix calulations",
+    "Read 5MB",
+    "Read 50MB",
+    "Read 200MB",
+    "Write 5MB",
+    "Write 50MB",
+    "Write 200MB"
+  )
+)
 
 fileInput("results", "Upload results file")
 
 user_rank = NULL
 results = reactive({
-  if(!is.null(input$results)) {
+  if (!is.null(input$results)) {
     user_data = readRDS(file = input$results$datapath)
     user_results = summarise_results(user_data)
     all_results = rbind(past_results, user_results)
@@ -62,23 +76,51 @@ results = reactive({
   blas = get_option(input$blas)
   byte = get_option(input$byte)
   is_parallel = input$is_parallel
-  res = select_results(get_test(input$test), all_results, 
-                       byte_optimize = byte, 
-                       blas_optimize = blas, 
-                       parallel = is_parallel)
+  res = select_results(
+    get_test(input$test),
+    all_results,
+    byte_optimize = byte,
+    blas_optimize = blas,
+    parallel = is_parallel
+  )
   res$is_user = FALSE
   res$is_user[res$id == user_id] = TRUE
   res = clean_table(res)
-  
-  if(input$os != "All") res = res[res$sysname == input$os,]
-  colnames(res) = c("id", "Rank", "Time", "CPU",
-                    "Byte Compile", "BLAS Opt", "OS", "RAM (GB)", "Test", 
-                    "Cores", "is_user")
- 
-  res = res[,c(TRUE, !is_parallel, TRUE, TRUE,
-               is.null(byte), is.null(blas), input$os == "All", TRUE,
-               input$Test == "All",  TRUE, is_parallel, TRUE)]
-  if(nrow(res) > 0) res$Rank = 1:nrow(res)
+
+  if (input$os != "All") {
+    res = res[res$sysname == input$os, ]
+  }
+  colnames(res) = c(
+    "id",
+    "Rank",
+    "Time",
+    "CPU",
+    "Byte Compile",
+    "BLAS Opt",
+    "OS",
+    "RAM (GB)",
+    "Test",
+    "Cores",
+    "is_user"
+  )
+
+  res = res[, c(
+    TRUE,
+    !is_parallel,
+    TRUE,
+    TRUE,
+    is.null(byte),
+    is.null(blas),
+    input$os == "All",
+    TRUE,
+    input$Test == "All",
+    TRUE,
+    is_parallel,
+    TRUE
+  )]
+  if (nrow(res) > 0) {
+    res$Rank = seq_len(nrow(res))
+  }
   res
 })
 br()
@@ -86,25 +128,37 @@ br()
 renderUI({
   ret = NULL
   user_rank = which(results()$is_user)
-  
-  if(!is.null(input$results)) {
+
+  if (!is.null(input$results)) {
     ret = paste(ret, "File uploaded.", br(), br())
-    
-    if(sum(user_rank) > 0) {
-      ret = paste(ret, "Your machine is ranked", user_rank, "out of",
-                  nrow(results()), "machines")
+
+    if (sum(user_rank) > 0) {
+      ret = paste(
+        ret,
+        "Your machine is ranked",
+        user_rank,
+        "out of",
+        nrow(results()),
+        "machines"
+      )
     } else {
-      ret = paste(ret, br(), "For the current selection, your own
-                machine isn't displayed")
+      ret = paste(
+        ret,
+        br(),
+        "For the current selection, your own
+                machine isn't displayed"
+      )
     }
   }
   HTML(ret)
 })
 
-div(class="div-wrapper",
-    a(href="http://www.jumpingrivers.com",
-      img(src = "logo.png", style="width:150px;")
-    )
+div(
+  class = "div-wrapper",
+  a(
+    href = "http://www.jumpingrivers.com",
+    img(src = "logo.png", style = "width:150px;")
+  )
 )
 ```
 
@@ -117,10 +171,13 @@ Table
 ```{r}
 DT::renderDataTable({
   r = results()
-  data_table = DT::datatable(results()[,-c(1, ncol(r))], rownames=FALSE)
-  if(sum(r$is_user) > 0) {
-    DT::formatStyle(data_table, "Rank",
-                    backgroundColor = DT::styleEqual(which(r$is_user), "orange"))
+  data_table = DT::datatable(results()[, -c(1, ncol(r))], rownames = FALSE)
+  if (sum(r$is_user) > 0) {
+    DT::formatStyle(
+      data_table,
+      "Rank",
+      backgroundColor = DT::styleEqual(which(r$is_user), "orange")
+    )
   } else {
     data_table
   }
@@ -136,34 +193,43 @@ Graphics
 library(plotly)
 renderPlotly({
   res = results()
-  if(nrow(res) > 0) {
+  if (nrow(res) > 0) {
     res$size = res$is_user + 6
-    res$size[res$is_user] =  16
+    res$size[res$is_user] = 16
     res$colour = "black"
     res$colour[res$is_user] = "steelblue"
-    if(!input$is_parallel) {
-      plot_ly(res, x = ~Rank, y = ~`Time`, type="scatter",
-              marker = list(color = ~colour, width=10, size=~size),
-              #          color= ~is_user, size=~size,
-              text = ~paste("CPU: ", CPU)) %>%
+    if (!input$is_parallel) {
+      plot_ly(
+        res,
+        x = ~Rank,
+        y = ~`Time`,
+        type = "scatter",
+        marker = list(color = ~colour, width = 10, size = ~size),
+        #          color= ~is_user, size=~size,
+        text = ~ paste("CPU: ", CPU)
+      ) |>
         layout(yaxis = list(type = "log", title = "Time (sec)"))
     } else {
       saveRDS(res, file = "/tmp/tmp.rds")
-      plot_ly(res, x = ~Cores, y = ~`Time`, type="scatter",
-        marker = list(color = ~colour, width=10, size=~size),
+      plot_ly(
+        res,
+        x = ~Cores,
+        y = ~`Time`,
+        type = "scatter",
+        marker = list(color = ~colour, width = 10, size = ~size),
         #          color= ~is_user, size=~size,
-        text = ~paste("CPU: ", CPU)) %>%
-      add_lines(color=~id) %>%
-    layout(yaxis = list(type = "log", title = "Normalised time (to 1 core)"), showlegend = FALSE)
-
-
-
-    }  
+        text = ~ paste("CPU: ", CPU)
+      ) |>
+        add_lines(color = ~id) |>
+        layout(
+          yaxis = list(type = "log", title = "Normalised time (to 1 core)"),
+          showlegend = FALSE
+        )
+    }
   } else {
-      plot_ly()
+    plot_ly()
   }
-  
-  })
+})
 ```
 
 ### Relative time
@@ -171,16 +237,18 @@ renderPlotly({
 ```{r}
 library(plotly)
 renderPlotly({
-  if(!input$is_parallel && nrow(results()) > 0) {
-  relative = (results()$Time/min(results()$Time))
-  plot_ly(results(), x = ~Rank, y = ~relative,
-        text = ~paste("CPU: ", CPU)) %>%
-     layout(yaxis = list(type = "log", title = "Relative time"))
+  if (!input$is_parallel && nrow(results()) > 0) {
+    relative = (results()$Time / min(results()$Time))
+    plot_ly(
+      results(),
+      x = ~Rank,
+      y = ~relative,
+      text = ~ paste("CPU: ", CPU)
+    ) |>
+      layout(yaxis = list(type = "log", title = "Relative time"))
   } else {
     plot_ly()
   }
-
-
 })
 ```
 
@@ -218,9 +286,11 @@ renderPlotly({
   n = as.numeric(as.character(names(ram)))
   x_axis = factor(n)
   plot_ly(
-      x = x_axis, y = ram,
-      name = "CPU distribution",type = "bar"
-    )
+    x = x_axis,
+    y = ram,
+    name = "CPU distribution",
+    type = "bar"
+  )
 })
 ```
 
@@ -300,4 +370,3 @@ we went to assess your machine.
 ---
 
 These benchmarks have been developed by many [authors](http://r.research.att.com/benchmarks/R-benchmark-25.R).
-

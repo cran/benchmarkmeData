@@ -31,5 +31,5 @@ Selects and aggregates over the \code{past_results_v2} data set or the
 \code{results} input data set..
 }
 \examples{
-select_results("prog", blas_optimize = NULL)
+select_results(test_group = "prog", blas_optimize = NULL)
 }

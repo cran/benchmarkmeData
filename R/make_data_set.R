@@ -18,13 +18,19 @@ summarise_results = function(res) {
   id = res$id
   date = res$date
   results = res$results
-  if (!is.data.frame(results)) return(NULL)
+  if (!is.data.frame(results)) {
+    return(NULL)
+  }
   ## Make past versions consistent with current
-  if (!("cores" %in% colnames(results))) results$cores = 0
+  if (!("cores" %in% colnames(results))) {
+    results$cores = 0
+  }
   colnames(results)[5] = "test_group"
-  timings = aggregate(x = results$elapsed,
-                      by = list(test_group = results$test_group, cores = results$cores),
-                      FUN = "sum")
+  timings = aggregate(
+    x = results$elapsed,
+    by = list(test_group = results$test_group, cores = results$cores),
+    FUN = "sum"
+  )
 
   tests = timings$test_group
   cores = timings$cores
@@ -35,7 +41,12 @@ summarise_results = function(res) {
   if (length(unique(res$cpu$model_name)) == 0) {
     cpus = NA_character_
   } else {
-    cpus = gsub("(?<=[\\s])\\s*|^\\s+$", "", unique(res$cpu$model_name), perl = TRUE)
+    cpus = gsub(
+      "(?<=[\\s])\\s*|^\\s+$",
+      "",
+      unique(res$cpu$model_name),
+      perl = TRUE
+    )
   }
   ram = res$ram
   byte_optimize = as.vector(res$byte_compiler)
@@ -44,25 +55,38 @@ summarise_results = function(res) {
   r_minor_point = strsplit(res$r_version$minor, "\\.")[[1]]
 
   if (length(res$sys_info) == 1 && is.na(res$sys_info)) {
-      release = NA
+    release = NA
     if (length(res$platform_info) == 1 && is.na(res$platform_info)) {
       sysname = NA
     } else {
       sysname = res$platform_info$OS.type
     }
-  } else{
+  } else {
     sysname = res$sys_info$sysname
     release = res$sys_info$release
   }
 
-  if (!is.na(sysname) && sysname == "windows")
+  if (!is.na(sysname) && sysname == "windows") {
     sysname = "Windows"
+  }
   package_version = package_version(res$package_version)
-  tibble::tibble(id, date, time = values, test_group = tests,
-             cpu = cpus, ram = as.numeric(ram), byte_optimize,
-             r_major, r_minor = r_minor_point[1], r_point = r_minor_point[2],
-             sysname, release, blas_optimize, cores,
-             package_version = package_version)
+  tibble::tibble(
+    id,
+    date,
+    time = values,
+    test_group = tests,
+    cpu = cpus,
+    ram = as.numeric(ram),
+    byte_optimize,
+    r_major,
+    r_minor = r_minor_point[1],
+    r_point = r_minor_point[2],
+    sysname,
+    release,
+    blas_optimize,
+    cores,
+    package_version = package_version
+  )
 }
 
 #' @rdname move_files

@@ -1,4 +1,7 @@
-# Versin 1.0.4
+# Versin 2.0.0
+  * This package is no longer maintained
+
+# Version 1.0.4
   * Dataset bump
 
 # Version 1.0.3
@@ -27,13 +30,13 @@
 
 # Version 0.3.1
   * Updated data set
-  
+
 # Version 0.3.0
   * Updated data set
 
 # Version 0.2.2
   * Add quotes to `benchmarkme` in DESCRIPTION file.
-  
+
 # Version 0.2.1
   * Match benchmarkme version.
   * First version on CRAN

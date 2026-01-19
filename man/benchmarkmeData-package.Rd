@@ -3,19 +3,20 @@
 \docType{package}
 \name{benchmarkmeData-package}
 \alias{benchmarkmeData-package}
-\alias{benchmarkmeData}
-\title{The benchmarkmeData package}
+\title{benchmarkmeData: Data Set for the 'benchmarkme' Package}
 \description{
-This package contains the results from users running the
-\pkg{benchmarkme} package. The key function is \code{plot_past()}.
-}
-\examples{
-plot_past("prog")
+Crowd sourced benchmarks from running the 'benchmarkme' package.
 }
 \seealso{
-\url{https://github.com/csgillespie/benchmarkme-data}
+Useful links:
+\itemize{
+  \item \url{https://github.com/csgillespie/benchmarkme-data}
+  \item Report bugs at \url{https://github.com/csgillespie/benchmarkme-data/issues}
+}
+
 }
 \author{
-\email{csgillespie@gmail.com}
+\strong{Maintainer}: Colin Gillespie \email{csgillespie@gmail.com} (\href{https://orcid.org/0000-0003-1787-0275}{ORCID})
+
 }
-\keyword{package}
+\keyword{internal}

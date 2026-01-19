@@ -1,14 +1,17 @@
 list_files = function(from) {
-  c(list.files(from, full.names = TRUE, pattern = "*.rds"),
-    list.files(from, full.names = TRUE, pattern = "*.RData"))
+  c(
+    list.files(from, full.names = TRUE, pattern = "*.rds"),
+    list.files(from, full.names = TRUE, pattern = "*.RData")
+  )
 }
 
 
 get_empty_results = function(from) {
   files = list_files(from)
   empty_files = rep(NA, length(files))
-  for (i in seq_along(files))
+  for (i in seq_along(files)) {
     empty_files[i] = is.null(readRDS(files[i])$results)
+  }
   empty_files
 }
 
@@ -33,7 +36,7 @@ move_files = function(from, to) {
 
   files = list_files(from)
   for (i in seq_along(files)) {
-    cmd = paste("mv -v", files[i],  to[i])
+    cmd = paste("mv -v", files[i], to[i])
     system(cmd)
   }
   invisible(files)

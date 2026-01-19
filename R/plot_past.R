@@ -23,44 +23,68 @@ globalVariables(c("cpu", "n_time", "past_results_v2", "time", "sysname", "ram"))
 #' @examples
 #' ## Plot all past results for the `prog` benchmark
 #' plot_past("prog", blas_optimize = NULL)
-plot_past = function(test_group,
-                     blas_optimize = NULL,
-                     cores = 0,
-                     log = "y") {
+plot_past = function(test_group, blas_optimize = NULL, cores = 0, log = "y") {
+     if (missing(test_group) || !(test_group %in% get_benchmarks())) {
+          stop(
+               "test_group should be one of\n\t",
+               get_benchmarks(collapse = TRUE),
+               call. = FALSE
+          )
+     }
 
-  if (missing(test_group) || !(test_group %in% get_benchmarks())) {
-    stop("test_group should be one of\n\t",
-         get_benchmarks(collapse = TRUE),
-         call. = FALSE)
-  }
+     results = select_results(
+          test_group,
+          blas_optimize = blas_optimize,
+          cores = cores
+     )
 
-  results = select_results(test_group, blas_optimize = blas_optimize,
-                           cores = cores)
+     ## Arrange plot colours and layout
+     op = par(
+          mar = c(3, 3, 2, 1),
+          mgp = c(2, 0.4, 0),
+          tck = -.01,
+          cex.axis = 0.8,
+          las = 1,
+          mfrow = c(1, 2)
+     )
+     old_pal = palette()
+     on.exit({
+          palette(old_pal)
+          par(op)
+     })
+     nice_palette()
 
-  ## Arrange plot colours and layout
-  op = par(mar = c(3, 3, 2, 1),
-           mgp = c(2, 0.4, 0), tck = -.01,
-           cex.axis = 0.8, las = 1, mfrow = c(1, 2))
-  old_pal = palette()
-  on.exit({
-    palette(old_pal)
-    par(op)
-  })
-  nice_palette()
+     ymin = min(results$time)
+     ymax = max(results$time)
+     plot(
+          results$time,
+          xlab = "Rank",
+          ylab = "Total timing (secs)",
+          ylim = c(ymin, ymax),
+          xlim = c(1, nrow(results) + 1),
+          cex = 0.9,
+          panel.first = grid(),
+          log = log,
+          pch = 21,
+          bg = as.numeric(results$test_group)
+     )
 
-  ymin = min(results$time)
-  ymax = max(results$time)
-  plot(results$time, xlab = "Rank", ylab = "Total timing (secs)",
-       ylim = c(ymin, ymax), xlim = c(1, nrow(results) + 1), cex = 0.9,
-       panel.first = grid(), log = log, pch = 21, bg = as.numeric(results$test_group))
+     ## Relative timings
+     fastest = min(results$time)
+     ymax = ymax / fastest
+     plot(
+          results$time / fastest,
+          xlab = "Rank",
+          ylab = "Relative timing",
+          ylim = c(1, ymax),
+          xlim = c(1, nrow(results) + 1),
+          cex = 0.9,
+          panel.first = grid(),
+          log = log,
+          pch = 21,
+          bg = as.numeric(results$test_group)
+     )
+     abline(h = 1, lty = 3)
 
-  ## Relative timings
-  fastest = min(results$time)
-  ymax = ymax / fastest
-  plot(results$time / fastest, xlab = "Rank", ylab = "Relative timing",
-       ylim = c(1, ymax), xlim = c(1, nrow(results) + 1), cex = 0.9,
-       panel.first = grid(), log = log, pch = 21, bg = as.numeric(results$test_group))
-  abline(h = 1, lty = 3)
-
-  invisible(results)
+     invisible(results)
 }
